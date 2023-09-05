@@ -1,0 +1,84 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  annotations:
+    vm.kubevirt.io/flavor: medium
+    vm.kubevirt.io/os: windows2k19
+  name: winserver2019
+spec:
+  dataVolumeTemplates:
+    - metadata:
+        creationTimestamp: null
+        name: winserver2019-rootdisk-install
+      spec:
+        pvc:
+          accessModes:
+            - ReadWriteMany
+          resources:
+            requests:
+              storage: 5Gi
+          storageClassName: ocs-storagecluster-ceph-rbd
+          volumeMode: Block
+        source:
+          http:
+            url: 'http://10.20.0.254/download/Windows2019.iso'
+    - metadata:
+        creationTimestamp: null
+        name: winserver2019-rootdisk
+      spec:
+        pvc:
+          accessModes:
+            - ReadWriteMany
+          resources:
+            requests:
+              storage: 20Gi
+          volumeMode: Block
+        source:
+          blank: {}
+  running: true
+  template:
+    spec:
+      domain:
+        cpu:
+          cores: 1
+        devices:
+          disks:
+            - bootOrder: 1
+              cdrom:
+                bus: sata
+              name: rootdisk-install
+            - bootOrder: 2
+              disk:
+                bus: sata
+              name: rootdisk
+            - cdrom:
+                bus: sata
+              name: windows-guest-tools
+          inputs:
+            - bus: usb
+              name: tablet
+              type: tablet
+          interfaces:
+            - masquerade: {}
+              model: e1000e
+              name: default
+        machine:
+          type: pc-q35-rhel8.3.0
+        resources:
+          requests:
+            memory: 4Gi
+      evictionStrategy: LiveMigrate
+      hostname: winserver2019
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - dataVolume:
+            name: winserver2019-rootdisk
+          name: rootdisk
+        - dataVolume:
+            name: winserver2019-rootdisk-install
+          name: rootdisk-install
+        - containerDisk:
+            image: registry.redhat.io/container-native-virtualization/virtio-win
+          name: windows-guest-toolst
