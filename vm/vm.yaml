@@ -15,6 +15,7 @@ metadata:
     vm.kubevirt.io/template.revision: '1'
     workload.template.kubevirt.io/server: 'true'
   name: details-vm
+  namespace: app-vm
 spec:
   dataVolumeTemplates:
     - apiVersion: cdi.kubevirt.io/v1beta1
