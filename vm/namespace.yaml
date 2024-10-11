@@ -1,0 +1,7 @@
+kind: Project
+apiVersion: project.openshift.io/v1
+metadata:
+  name: app-vm
+  labels:
+    kubernetes.io/metadata.name: app-vm
+spec:
