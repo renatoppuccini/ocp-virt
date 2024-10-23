@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: details-svc
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9080
+  selector:
+    vm.kubevirt.io/name: test-vm
