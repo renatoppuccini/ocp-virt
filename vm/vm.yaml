@@ -97,7 +97,12 @@ spec:
               chpasswd: { expire: False }
               bootcmd:
                 - "yum install git ruby -y"
+                - "cd ~/"
                 - "git clone https://github.com/maistra/istio.git"
-                - "cd istio/samples/bookinfo/src/details/"
-                - "ruby details.rb 9080 &"
+                - "cd ~/istio/samples/bookinfo/src/details/"
+                - "touch Gemfile"
+                - "gem install bundler"
+                - "gem install webrick"
+                - "bundle add webrick"
+                - "ruby ~/istio/samples/bookinfo/src/details/details.rb 9080 &"
           name: cloudinitdisk
