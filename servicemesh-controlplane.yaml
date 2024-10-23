@@ -1,59 +1,33 @@
-kind: ServiceMeshControlPlane
 apiVersion: maistra.io/v2
+kind: ServiceMeshControlPlane
 metadata:
   name: basic
-  namespace: istio-system
 spec:
-  version: v2.3
   tracing:
     type: Jaeger
-    sampling: 10000
+    sampling: 510
   policy:
     type: Istiod
-  telemetry:
-    type: Istiod
-  gateways:
-    additionalEgress:
-      some-other-egress-gateway:
-        service: {}
-    additionalIngress:
-      some-other-ingress-gateway:
-        service: {}
-    egress:
-      service:
-        ports:  
-          - name: status-port
-            port: 15020
-            targetPort: 0
-          - name: http2
-            port: 80
-            targetPort: 8080
-          - name: https
-            port: 443
-            targetPort: 8443
-        type: ClusterIP
-    ingress:
-      service:
-        ports:
-          - name: status-port
-            port: 15020
-            targetPort: 0
-          - name: http2
-            port: 80
-            targetPort: 8080
-          - name: https
-            port: 443
-            targetPort: 8443
-        type: ClusterIP
   addons:
-    jaeger:
-      install:
-        storage:
-          type: Memory
-    prometheus:
-      enabled: true
-    kiali:
-      enabled: true
     grafana:
       enabled: true
-
+    jaeger:
+      install:
+        ingress:
+          enabled: true
+    kiali:
+      install:
+        dashboard:
+          enableGrafana: true
+          enablePrometheus: true
+          enableTracing: true
+        service:
+          ingress:
+            enabled: true
+      enabled: true
+    prometheus:
+      enabled: true
+  telemetry:
+    type: Istiod
+  version: v2.6
+  mode: ClusterWide
